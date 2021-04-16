@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from .models import Location
-from .serializers import LocationsSerializer
+from .serializers import LocationsSerializer, LocationsListerSerializer
 
 from rest_framework import status, permissions
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 class LocationsList(APIView):
 
@@ -27,6 +28,8 @@ class LocationsList(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def search_data(self, request, format=None):
+        pass
 
 class LocationDetail(APIView):
 
@@ -57,3 +60,10 @@ class LocationDetail(APIView):
         location.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class APILocations(ListAPIView):
+    queryset = Location.objects.all()
+    serializer_class = LocationsListerSerializer
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('sports__name', 'sports__period')

@@ -27,7 +27,7 @@ class RegionsSerializer(serializers.ModelSerializer):
 
 class LocationsSerializer(serializers.ModelSerializer):
 
-    regions = RegionsSerializer(read_only=True, many=True)
+    regions = RegionsSerializer(read_only=True)
 
     class Meta:
         model = Location
@@ -41,3 +41,16 @@ class LocationsSerializer(serializers.ModelSerializer):
 
         return rep_sports
 
+
+class LocationsListerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = ['name', 'sports', 'daily_costs']
+
+    def to_representation(self, instance):
+
+        rep_sports = super().to_representation(instance)
+        rep_sports["sports"] = ExtremeSportsSerializer(instance.sports.all(), many=True).data
+
+        return rep_sports

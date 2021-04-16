@@ -24,11 +24,7 @@ class Region(models.Model):
 
 class ExtremeSport(models.Model):
     name = models.CharField(max_length=100)
-    period = models.CharField(max_length=100)
-    daily_costs = models.CharField(max_length=15)
-
-    class Meta:
-        ordering = ['-daily_costs']
+    period = models.CharField(max_length=100, default="")
 
     def __str__(self):
         return self.name
@@ -39,8 +35,12 @@ class Location(models.Model):
     description = models.TextField(default="")
     coordinates = models.CharField(max_length=25)
     postal_code = models.CharField(max_length=15)
-    regions = models.ManyToManyField(Region)
+    regions = models.ForeignKey(Region, on_delete=models.CASCADE, default=1)
     sports = models.ManyToManyField(ExtremeSport)
+    daily_costs = models.CharField(max_length=15, default="")
+
+    class Meta:
+        ordering = ['daily_costs']
 
     def __str__(self):
         return self.name
